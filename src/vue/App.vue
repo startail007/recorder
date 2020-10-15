@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="container">
-      <template>
+      <template v-if="signInState">
         <div class="d-flex my-4 align-items-center">
           <div class="btn btn-danger waves_effect" @click="btnRecorder_click">
             <i class="material-icons align-middle">keyboard_voice </i>
@@ -225,7 +225,7 @@ export default {
     },
     async btnRecorder_click(ev) {
       if (!this.recorderBool && !this.uploading) {
-        alert("ok1214");
+        alert("ok1218");
         const currentTarget = ev.currentTarget;
         this.cancelPlayAudio();
         try {
@@ -234,41 +234,39 @@ export default {
           alert("必需啟用麥克風");
         }
         if (this.mediaStreamObj) {
-          let recorder;
           try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            recorder = new Recorder(audioContext);
+            const recorder = new Recorder(audioContext);
             recorder.init(this.mediaStreamObj);
             recorder.start();
-            alert("通過");
-          } catch (error) {}
-          const click = async (ev) => {
-            let target = ev.target;
-            let save = false;
-            while (target) {
-              if (target === currentTarget) {
-                save = true;
-                break;
+            const click = async (ev) => {
+              let target = ev.target;
+              let save = false;
+              while (target) {
+                if (target === currentTarget) {
+                  save = true;
+                  break;
+                }
+                target = target.parentElement;
               }
-              target = target.parentElement;
-            }
-            document.body.removeEventListener("click", click);
-            if (save) {
-              this.uploading = true;
-              const { blob, buffer } = await recorder.stop();
-              //await this.saveData(blob);
-              alert(blob);
-            } else {
-              recorder.stop();
-            }
-            this.uploading = false;
-            this.recorderBool = false;
-            this.mediaStreamObj.getTracks().forEach((track) => track.stop());
-            this.mediaStreamObj = null;
-            alert("ok");
-          };
-          setTimeout(() => document.body.addEventListener("click", click));
-          this.recorderBool = true;
+              document.body.removeEventListener("click", click);
+              if (save) {
+                this.uploading = true;
+                const { blob, buffer } = await recorder.stop();
+                await this.saveData(blob);
+              } else {
+                recorder.stop();
+              }
+              this.uploading = false;
+              this.recorderBool = false;
+              this.mediaStreamObj.getTracks().forEach((track) => track.stop());
+              this.mediaStreamObj = null;
+            };
+            setTimeout(() => document.body.addEventListener("click", click));
+            this.recorderBool = true;
+          } catch (error) {
+            alert("不支援");
+          }
         }
       }
     },
