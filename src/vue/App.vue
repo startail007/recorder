@@ -86,7 +86,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
 import getBlobDuration from "get-blob-duration";
-import Recorder from "@js/recorder";
+import Recorder from "recorder-js";
 const firebaseConfig = {
   apiKey: "AIzaSyB5vZ8duvVnJowTvmiSSvyLyY2TOMtc-6g",
   authDomain: "chat-292208.firebaseapp.com",
@@ -224,36 +224,34 @@ export default {
       auth.signOut();
     },
     async btnRecorder_click(ev) {
-      try {
-        if (!this.recorderBool) {
-          const target = ev.currentTarget;
-          this.cancelPlayAudio();
+      if (!this.recorderBool && !this.uploading) {
+        const target = ev.currentTarget;
+        this.cancelPlayAudio();
+        try {
           this.mediaStreamObj = await navigator.mediaDevices.getUserMedia({ audio: true });
-          const recorder = new Recorder(this.mediaStreamObj);
-          recorder.reset();
-          recorder.record(10000);
-          const click = (ev) => {
+        } catch (error) {
+          alert("必需啟用麥克風");
+        }
+        if (this.mediaStreamObj) {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const recorder = new Recorder(audioContext);
+          recorder.init(this.mediaStreamObj);
+          recorder.start();
+          const click = async (ev) => {
             const save = ev.path.some((el) => el === target);
-            if (save) {
-              this.uploading = true;
-              recorder.save().then(async (recorderData) => {
-                //Blob type轉成webm;codecs=opus
-                const audioData = new Blob(recorderData, { type: "audio/webm;codecs=opus" });
-                await this.saveData(audioData);
-                this.uploading = false;
-              });
-            } else {
-              recorder.cancel();
-            }
+            this.uploading = true;
             window.removeEventListener("click", click);
-            this.recorderBool = recorder.state == "recording";
+            const { blob, buffer } = await recorder.stop();
+            if (save) {
+              await this.saveData(blob);
+            }
+            this.uploading = false;
+            this.recorderBool = false;
             this.mediaStreamObj.getTracks().forEach((track) => track.stop());
           };
           setTimeout(() => window.addEventListener("click", click));
-          this.recorderBool = recorder.state == "recording";
+          this.recorderBool = true;
         }
-      } catch (error) {
-        alert("必需啟用麥克風");
       }
     },
     async btnPlay_click(id, item) {

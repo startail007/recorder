@@ -1,3 +1,4 @@
+//ios 不支援MediaRecorder
 class Recorder {
   constructor(stream) {
     this.audio = new Audio();

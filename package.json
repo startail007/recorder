@@ -31,6 +31,7 @@
     "node-sass": "^4.14.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "popper.js": "^1.16.1",
+    "recorder-js": "^1.0.7",
     "require": "^2.4.20",
     "sass": "^1.27.0",
     "sass-loader": "^10.0.3",
