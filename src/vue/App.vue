@@ -1,11 +1,11 @@
 <template>
-  <div class="wrap" :class="{ running: running }">
+  <div class="wrap" :class="{ isRunning: isRunning }">
     <div class="navbar shadow-sm px-0">
       <div class="container justify-content-start align-items-center">
         <div class="title">錄音紀錄</div>
         <div class="flex-1"></div>
         <div class="d-flex align-items-center">
-          <template v-if="signInState">
+          <template v-if="isSignIn">
             <div class="user d-flex align-items-center" tabindex="1">
               <div class="userImg" :style="{ backgroundImage: userData.imgSrc }"></div>
               <div class="menu">
@@ -30,13 +30,13 @@
       </div>
     </div>
     <div class="container">
-      <template v-if="signInState">
+      <template v-if="isSignIn">
         <div class="d-flex my-4 align-items-center">
           <div class="btn btn-danger waves_effect" @click="btnRecorder_click">
             <i class="material-icons align-middle">keyboard_voice </i>
-            {{ recorderBool ? "停止錄音" : "開始錄音" }}
+            {{ isRecording ? "停止錄音" : "開始錄音" }}
           </div>
-          <div class="uploading ml-2" v-if="uploading">上傳...</div>
+          <div class="isUploading ml-2" v-if="isUploading">上傳...</div>
         </div>
         <div class="items mt-4">
           <div
@@ -50,7 +50,7 @@
             <template v-if="item.id === currentPlayId">
               <div class="control">
                 <div class="btnPlay btn btn-dark btn-sm waves_effect" @click="btnPlay_click(item.id, item)">
-                  <i class="material-icons align-middle">{{ playing ? "pause" : "play_arrow" }}</i>
+                  <i class="material-icons align-middle">{{ isPlaying ? "pause" : "play_arrow" }}</i>
                 </div>
               </div>
               <div class="duration mx-2">{{ formatTime(Math.floor(currentTime)) }}</div>
@@ -111,8 +111,8 @@ export default {
   name: "app",
   data() {
     return {
-      running: false, //正在執行
-      signInState: false, //使用者登入狀態
+      isRunning: false, //正在執行
+      isSignIn: false, //使用者登入狀態
       userData: {
         name: "",
         imgSrc: "",
@@ -123,12 +123,12 @@ export default {
       messages: [], //訊息
       unSnapshot: null, //取消偵測訊息事件
       mediaStreamObj: null, //麥克風串流物件
-      recorderBool: false, //錄音狀態
+      isRecording: false, //錄音狀態
       playAudio: null, //播放音樂
       currentPlayId: null, //目前播放ID
       currentTime: 0, //目前播放時間
-      playing: false, //是否播放
-      uploading: false, //是否正在上傳
+      isPlaying: false, //是否播放
+      isUploading: false, //是否正在上傳
     };
   },
   watch: {},
@@ -138,19 +138,19 @@ export default {
       this.currentTime = this.playAudio.currentTime;
     });
     this.playAudio.addEventListener("play", (ev) => {
-      this.playing = true;
+      this.isPlaying = true;
     });
     this.playAudio.addEventListener("pause", (ev) => {
-      this.playing = false;
+      this.isPlaying = false;
     });
     this.playAudio.addEventListener("ended", (ev) => {
       //this.currentTime = 0;
-      this.playing = false;
+      this.isPlaying = false;
     });
 
     //let unSnapshot;
     auth.onAuthStateChanged((user) => {
-      this.signInState = user ? true : false;
+      this.isSignIn = user ? true : false;
       if (user) {
         this.signIn(user);
       } else {
@@ -211,7 +211,7 @@ export default {
       this.audiosPath = "";
       this.messages = [];
       this.mediaStreamObj = null;
-      this.recorderBool = false;
+      this.isRecording = false;
     },
     btnSignIn_click() {
       var provider = new firebase.auth.GoogleAuthProvider();
@@ -224,7 +224,7 @@ export default {
       auth.signOut();
     },
     async btnRecorder_click(ev) {
-      if (!this.recorderBool && !this.uploading) {
+      if (!this.isRecording && !this.isUploading) {
         const currentTarget = ev.currentTarget;
         this.cancelPlayAudio();
         try {
@@ -254,20 +254,20 @@ export default {
               }
               document.body.removeEventListener("click", click);
               if (save) {
-                this.uploading = true;
+                this.isUploading = true;
                 const { blob, buffer } = await recorder.stop();
                 const mp3Blob = new Blob([blob], { type: "audio/mp3" });
                 await this.saveData(mp3Blob);
               } else {
                 recorder.stop();
               }
-              this.uploading = false;
-              this.recorderBool = false;
+              this.isUploading = false;
+              this.isRecording = false;
               this.mediaStreamObj.getTracks().forEach((track) => track.stop());
               this.mediaStreamObj = null;
             };
             setTimeout(() => document.body.addEventListener("click", click));
-            this.recorderBool = true;
+            this.isRecording = true;
           } catch (error) {
             alert("不支援");
           }
@@ -384,7 +384,7 @@ body {
 }
 </style>
 <style lang="scss" scoped>
-.wrap.running {
+.wrap.isRunning {
   pointer-events: none;
 }
 .navbar {
@@ -397,7 +397,7 @@ body {
     font-size: 1.5rem;
   }
 }
-.uploading {
+.isUploading {
   color: red;
 }
 .user {
