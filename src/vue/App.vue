@@ -225,6 +225,7 @@ export default {
     },
     async btnRecorder_click(ev) {
       if (!this.recorderBool && !this.uploading) {
+        alert("ok0");
         const target = ev.currentTarget;
         /*this.cancelPlayAudio();
         try {
@@ -260,7 +261,10 @@ export default {
           this.recorderBool = false;
           /*this.mediaStreamObj.getTracks().forEach((track) => track.stop());*/
         };
-        setTimeout(() => document.body.addEventListener("click", click));
+        setTimeout(() => {
+          document.body.addEventListener("click", click);
+          alert("ok1");
+        }, 100);
         this.recorderBool = true;
 
         //}
