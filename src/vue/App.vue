@@ -233,17 +233,26 @@ export default {
           alert("必需啟用麥克風");
         }
         if (this.mediaStreamObj) {
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          const recorder = new Recorder(audioContext);
-          recorder.init(this.mediaStreamObj);
-          recorder.start();
+          let recorder;
+          try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            recorder = new Recorder(audioContext);
+            recorder.init(this.mediaStreamObj);
+            recorder.start();
+          } catch (error) {
+            alert("這裡錯誤");
+          }
           const click = async (ev) => {
+            console.log(recorder);
+            alert("這裡可以按");
             const save = ev.path.some((el) => el === target);
-            this.uploading = true;
             window.removeEventListener("click", click);
-            const { blob, buffer } = await recorder.stop();
             if (save) {
+              this.uploading = true;
+              const { blob, buffer } = await recorder.stop();
               await this.saveData(blob);
+            } else {
+              recorder.stop();
             }
             this.uploading = false;
             this.recorderBool = false;
