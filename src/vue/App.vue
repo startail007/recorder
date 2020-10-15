@@ -1,5 +1,5 @@
-<template>
-  <div class="wrap" :class="{ isRunning: isRunning }" v-cloak>
+<template v-cloak>
+  <div class="wrap" :class="{ isRunning: isRunning }">
     <div class="navbar shadow-sm px-0">
       <div class="container justify-content-start align-items-center">
         <div class="title">錄音紀錄</div>
