@@ -244,10 +244,10 @@ export default {
           } catch (error) {
             alert("這裡錯誤");
           }*/
-        const click = async (ev) => {
+        const click = (ev) => {
           //console.log(recorder);
-          const save = ev.path.some((el) => el === target);
-          document.body.removeEventListener("click", click);
+          //const save = ev.path.some((el) => el === target);
+          //document.body.removeEventListener("click", click);
           alert(target);
           alert("ok");
           /*if (save) {
@@ -257,7 +257,7 @@ export default {
             } else {*/
           //recorder.stop();
           //}
-          this.uploading = false;
+          //this.uploading = false;
           this.recorderBool = false;
           /*this.mediaStreamObj.getTracks().forEach((track) => track.stop());*/
         };
