@@ -1,4 +1,4 @@
-<template v-cloak>
+<template>
   <div class="wrap" :class="{ isRunning: isRunning }">
     <div class="navbar shadow-sm px-0">
       <div class="container justify-content-start align-items-center">
