@@ -225,7 +225,7 @@ export default {
     },
     async btnRecorder_click(ev) {
       if (!this.recorderBool && !this.uploading) {
-        alert("ok1126");
+        alert("ok1128");
         const target = ev.currentTarget;
         /*this.cancelPlayAudio();
         try {
@@ -246,8 +246,8 @@ export default {
           }*/
         const click = (ev) => {
           //console.log(recorder);
-          //const save = ev.path.some((el) => el === target);
-          //document.body.removeEventListener("click", click);
+          const save = ev.path.some((el) => el === target);
+          document.body.removeEventListener("click", click);
           alert(target);
           alert("ok");
           /*if (save) {
