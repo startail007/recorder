@@ -225,57 +225,51 @@ export default {
     },
     async btnRecorder_click(ev) {
       if (!this.recorderBool && !this.uploading) {
-        alert("ok1130");
-        const target = ev.currentTarget;
-        /*this.cancelPlayAudio();
+        alert("ok1214");
+        const currentTarget = ev.currentTarget;
+        this.cancelPlayAudio();
         try {
           this.mediaStreamObj = await navigator.mediaDevices.getUserMedia({ audio: true });
         } catch (error) {
           alert("必需啟用麥克風");
-        }*/
-        //if (this.mediaStreamObj) {
-        /*let recorder;
+        }
+        if (this.mediaStreamObj) {
+          let recorder;
           try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             recorder = new Recorder(audioContext);
             recorder.init(this.mediaStreamObj);
             recorder.start();
             alert("通過");
-          } catch (error) {
-            alert("這裡錯誤");
-          }*/
-        const click = (ev) => {
-          //console.log(recorder);
-          try {
-            const save = ev.path.some((el) => el === target);
-          } catch (error) {
-            alert("save");
-          }
-          try {
+          } catch (error) {}
+          const click = async (ev) => {
+            let target = ev.target;
+            let save = false;
+            while (target) {
+              if (target === currentTarget) {
+                save = true;
+                break;
+              }
+              target = target.parentElement;
+            }
             document.body.removeEventListener("click", click);
-          } catch (error) {
-            alert("click");
-          }
-          alert(target);
-          alert("ok");
-          /*if (save) {
+            if (save) {
               this.uploading = true;
               const { blob, buffer } = await recorder.stop();
-              await this.saveData(blob);
-            } else {*/
-          //recorder.stop();
-          //}
-          //this.uploading = false;
-          this.recorderBool = false;
-          /*this.mediaStreamObj.getTracks().forEach((track) => track.stop());*/
-        };
-        setTimeout(() => {
-          document.body.addEventListener("click", click);
-          alert("ok1");
-        }, 100);
-        this.recorderBool = true;
-
-        //}
+              //await this.saveData(blob);
+              alert(blob);
+            } else {
+              recorder.stop();
+            }
+            this.uploading = false;
+            this.recorderBool = false;
+            this.mediaStreamObj.getTracks().forEach((track) => track.stop());
+            this.mediaStreamObj = null;
+            alert("ok");
+          };
+          setTimeout(() => document.body.addEventListener("click", click));
+          this.recorderBool = true;
+        }
       }
     },
     async btnPlay_click(id, item) {
