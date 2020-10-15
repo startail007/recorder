@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap" :class="{ isRunning: isRunning }">
+  <div class="wrap" :class="{ isRunning: isRunning }" v-cloak>
     <div class="navbar shadow-sm px-0">
       <div class="container justify-content-start align-items-center">
         <div class="title">錄音紀錄</div>
@@ -350,6 +350,9 @@ export default {
 body {
   margin: 0;
   min-height: 100vh;
+}
+[v-cloak] {
+  display: none;
 }
 .flex-1 {
   flex: 1;
