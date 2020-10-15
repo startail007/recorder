@@ -53,7 +53,7 @@
                   <i class="material-icons align-middle">{{ playing ? "pause" : "play_arrow" }}</i>
                 </div>
               </div>
-              <div class="duration mx-2">{{ formatTime(Math.ceil(item.data.duration - currentTime)) }}</div>
+              <div class="duration mx-2">{{ formatTime(Math.floor(currentTime)) }}</div>
               <div class="other">
                 <progress class="progress" max="1" :value="item.data.duration ? currentTime / item.data.duration : 0">
                   <span>0</span>%
@@ -66,7 +66,7 @@
                   <i class="material-icons align-middle">play_arrow</i>
                 </div>
               </div>
-              <div class="duration mx-2">{{ formatTime(Math.ceil(item.data.duration)) }}</div>
+              <div class="duration mx-2">{{ formatTime(Math.floor(item.data.duration)) }}</div>
               <div class="flex-1"></div>
             </template>
             <div class="edit">
@@ -144,7 +144,7 @@ export default {
       this.playing = false;
     });
     this.playAudio.addEventListener("ended", (ev) => {
-      this.currentTime = 0;
+      //this.currentTime = 0;
       this.playing = false;
     });
 
@@ -225,11 +225,14 @@ export default {
     },
     async btnRecorder_click(ev) {
       if (!this.recorderBool && !this.uploading) {
-        alert("ok1218");
         const currentTarget = ev.currentTarget;
         this.cancelPlayAudio();
         try {
-          this.mediaStreamObj = await navigator.mediaDevices.getUserMedia({ audio: true });
+          if (navigator.mediaDevices) {
+            this.mediaStreamObj = await navigator.mediaDevices.getUserMedia({ audio: true });
+          } else {
+            alert("此裝置不支援麥克風");
+          }
         } catch (error) {
           alert("必需啟用麥克風");
         }
@@ -253,7 +256,8 @@ export default {
               if (save) {
                 this.uploading = true;
                 const { blob, buffer } = await recorder.stop();
-                await this.saveData(blob);
+                const mp3Blob = new Blob([blob], { type: "audio/mp3" });
+                await this.saveData(mp3Blob);
               } else {
                 recorder.stop();
               }
