@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="container">
-      <template v-if="signInState">
+      <template>
         <div class="d-flex my-4 align-items-center">
           <div class="btn btn-danger waves_effect" @click="btnRecorder_click">
             <i class="material-icons align-middle">keyboard_voice </i>
