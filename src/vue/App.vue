@@ -239,6 +239,7 @@ export default {
             recorder = new Recorder(audioContext);
             recorder.init(this.mediaStreamObj);
             recorder.start();
+            alert("通過");
           } catch (error) {
             alert("這裡錯誤");
           }
@@ -247,13 +248,13 @@ export default {
             alert("這裡可以按");
             const save = ev.path.some((el) => el === target);
             window.removeEventListener("click", click);
-            if (save) {
+            /*if (save) {
               this.uploading = true;
               const { blob, buffer } = await recorder.stop();
               await this.saveData(blob);
-            } else {
-              recorder.stop();
-            }
+            } else {*/
+            recorder.stop();
+            //}
             this.uploading = false;
             this.recorderBool = false;
             this.mediaStreamObj.getTracks().forEach((track) => track.stop());
