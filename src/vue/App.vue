@@ -246,7 +246,7 @@ export default {
         const click = async (ev) => {
           //console.log(recorder);
           const save = ev.path.some((el) => el === target);
-          window.removeEventListener("click", click);
+          document.body.removeEventListener("click", click);
           alert(target);
           alert("ok");
           /*if (save) {
@@ -260,8 +260,9 @@ export default {
           this.recorderBool = false;
           /*this.mediaStreamObj.getTracks().forEach((track) => track.stop());*/
         };
-        setTimeout(() => window.addEventListener("click", click));
+        setTimeout(() => document.body.addEventListener("click", click));
         this.recorderBool = true;
+
         //}
       }
     },
@@ -340,6 +341,7 @@ export default {
 }
 body {
   margin: 0;
+  min-height: 100vh;
 }
 .flex-1 {
   flex: 1;
